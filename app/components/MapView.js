@@ -62,14 +62,14 @@ export default Marionette.View.extend({
 
   _getReverseGeocodingData: function(infowindow, futsal) {
     let view = this;
-    let latlng = new google.maps.LatLng(futsal.get('lat'), futsal.get('lng'));
+    let latlng = new view.googleMaps.LatLng(futsal.get('lat'), futsal.get('lng'));
     // This is making the Geocode request
-    let geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-      if (status !== google.maps.GeocoderStatus.OK) {
+    let geocoder = new view.googleMaps.Geocoder();
+    geocoder.geocode({ 'latLng': latlng }, function(results, status) {
+      if (status !== view.googleMaps.GeocoderStatus.OK) {
         // Error retrieving geocoded data
       }
-      if (status == google.maps.GeocoderStatus.OK) {
+      if (status === view.googleMaps.GeocoderStatus.OK) {
         let address = (results[0].formatted_address);
         infowindow.setContent(view.infoTemplate({futsal: futsal, address: address}));
       }
@@ -79,29 +79,30 @@ export default Marionette.View.extend({
   onRender: function() {
     let view = this;
     loadGoogleMapsAPI().then((googleMaps) => {
+      view.googleMaps = googleMaps;
       view.infowindow = new googleMaps.InfoWindow({content: ''});
 
       let markerCol = new view.Markers(futsals);
       view.map = new googleMaps.Map(document.getElementById('mapDiv'), {
         center: {lat: 27.7172, lng: 85.3240},
         zoom: 13,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeId: view.googleMaps.MapTypeId.ROADMAP,
         disableDefaultUI: true,
       });
 
       // Create the DIV to hold the control and call the CenterControl()
       // constructor passing in this DIV.
       let centerControlDiv = document.createElement('div');
-      new view._CenterControl(centerControlDiv, view.map);
+      view._CenterControl(centerControlDiv, view.map);
 
       centerControlDiv.index = 1;
-      view.map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+      view.map.controls[view.googleMaps.ControlPosition.TOP_CENTER].push(centerControlDiv);
 
       markerCol.each(function(futsal) {
         let profilePicture;
         try {
           profilePicture = require('../assets/images/futsals/' + futsal.get('profilePicture'));
-        } catch(e){
+        } catch (e) {
           profilePicture = require('../assets/images/placeholder.png');
         }
         futsal.set('profilePicture', profilePicture);
@@ -113,7 +114,7 @@ export default Marionette.View.extend({
           icon: require('../assets/images/marker.png')
         });
 
-        google.maps.event.addListener(marker, 'click', function() {
+        view.googleMaps.event.addListener(marker, 'click', function() {
           view.infowindow.setContent(view.infoTemplate({futsal: futsal, address: null}));
           view.infowindow.open(view.map, this);
           view._getReverseGeocodingData(view.infowindow, futsal);
