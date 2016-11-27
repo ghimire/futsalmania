@@ -4,12 +4,14 @@ import template from '../templates/map.jst';
 import infoTemplate from '../templates/infoWindow.jst';
 import loadGoogleMapsAPI from 'load-google-maps-api';
 import futsals from '../assets/data.json';
+import _ from 'underscore';
 
 
 export default Marionette.View.extend({
   template: template,
   infoTemplate: infoTemplate,
   markers: [],
+  userLocation: null,
 
   initialize: function() {
     let view = this;
@@ -97,6 +99,25 @@ export default Marionette.View.extend({
 
       centerControlDiv.index = 1;
       view.map.controls[view.googleMaps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+      // End of CenterControl
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          if(view.userLocation){
+            view.userLocation.setMap(null);
+          }
+          view.userLocation = new googleMaps.Marker({
+            position: new googleMaps.LatLng(position.coords.latitude , position.coords.longitude),
+            map: view.map,
+            title: 'Your Current Location',
+          });
+
+          view.googleMaps.event.addListener(view.userLocation, 'click', function() {
+            view.infowindow.setContent('Your Current Location');
+            view.infowindow.open(view.map, this);
+          });
+        }, _.noop());
+      }
 
       markerCol.each(function(futsal) {
         let profilePicture;
