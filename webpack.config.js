@@ -1,5 +1,3 @@
-'use strict';
-
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -29,10 +27,16 @@ const webpackCommon = {
         exclude: /node_modules/,
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
       },
+      { test: /\.json$/, loader: 'json' },
+      {
+        test: /\.(jpg|jpeg|png|gif)$/,
+        exclude: /node_modules/,
+        loader: 'file'
+      },
       {test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff'},
       {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream'},
       {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file'},
-      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml'}
+      {test: /\.(svg)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml'}
     ]
   },
   output: {
@@ -43,8 +47,8 @@ const webpackCommon = {
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
           compressor: {
-            warnings: false,
-          },
+            warnings: false
+          }
     }),
     new ExtractTextPlugin('app.css'),
     new CopyWebpackPlugin([{
@@ -52,15 +56,14 @@ const webpackCommon = {
       to: './index.html'
     }]),
     new webpack.ProvidePlugin({
+      jQuery: 'jquery',
       $: 'jquery',
-      jQuery: "jquery",
       Backbone: "backbone",
-      Mn: "marionette",
-      "window.jQuery": "jquery",
       _: 'underscore'
     })
   ],
   resolve: {
+    extensions: ['', '.js', '.jst'],
     root: path.join(__dirname, './app')
   },
   resolveLoader: {

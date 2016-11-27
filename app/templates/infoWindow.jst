@@ -1,0 +1,14 @@
+<div style="max-width: 300px" class="container-fluid">
+    <h3 class="raleway"><%- futsal.get('name') %></h3>
+    <%- futsal.get('lat') %>, <%- futsal.get('lng') %> <br/>
+    <p>
+        <img src="<%- futsal.get('profilePicture') %>" style="max-width: 100%; margin-left: auto; margin-right: auto" />
+    </p>
+
+    <div style="width: 100%" class="text-center">
+        <a target="_blank" type="button" class="btn btn-default" href="https://www.google.com/maps/dir/Current+Location/<%- futsal.get('lat') %>,<%- futsal.get('lng') %>">
+            <i class="glyphicon glyphicon-map-marker" style="color: #b13017"></i> Get Direction
+        </a>
+        <div class="clearfix"></div>
+    </div>
+</div>
