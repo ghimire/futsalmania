@@ -52,7 +52,7 @@ export default Marionette.View.extend({
     controlText.style.lineHeight = '38px';
     controlText.style.paddingLeft = '5px';
     controlText.style.paddingRight = '5px';
-    controlText.innerHTML = 'Nepal Futsal Community';
+    controlText.innerHTML = 'Futsal Mania Demo';
     controlUI.appendChild(controlText);
 
     // Setup the click event listeners: simply set the map to Chicago.
@@ -103,7 +103,7 @@ export default Marionette.View.extend({
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          if(view.userLocation){
+          if (view.userLocation) {
             view.userLocation.setMap(null);
           }
           view.userLocation = new googleMaps.Marker({

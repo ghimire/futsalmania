@@ -1,6 +1,6 @@
 # Futsal Mania Demo (Webpack + MarionetteJS + Babel/ES6)
 
-This app uses a modern JS skeleton with MarionetteJS for [Webpack](https://webpack.github.io/).
+This futsal app uses a modern JS skeleton with [MarionetteJS](http://marionettejs.com/) and [Webpack](https://webpack.github.io/).
 
 ## Getting started
 
