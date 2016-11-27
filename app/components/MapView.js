@@ -60,9 +60,27 @@ export default Marionette.View.extend({
 
   },
 
+  _getReverseGeocodingData: function(infowindow, futsal) {
+    let view = this;
+    let latlng = new google.maps.LatLng(futsal.get('lat'), futsal.get('lng'));
+    // This is making the Geocode request
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+      if (status !== google.maps.GeocoderStatus.OK) {
+        // Error retrieving geocoded data
+      }
+      if (status == google.maps.GeocoderStatus.OK) {
+        let address = (results[0].formatted_address);
+        infowindow.setContent(view.infoTemplate({futsal: futsal, address: address}));
+      }
+    });
+  },
+
   onRender: function() {
     let view = this;
     loadGoogleMapsAPI().then((googleMaps) => {
+      view.infowindow = new googleMaps.InfoWindow({content: ''});
+
       let markerCol = new view.Markers(futsals);
       view.map = new googleMaps.Map(document.getElementById('mapDiv'), {
         center: {lat: 27.7172, lng: 85.3240},
@@ -88,18 +106,19 @@ export default Marionette.View.extend({
         }
         futsal.set('profilePicture', profilePicture);
 
-        let infowindow = new googleMaps.InfoWindow({
-          content: view.infoTemplate({futsal: futsal})
-        });
         let marker = new googleMaps.Marker({
           position: new googleMaps.LatLng(futsal.get('lat'), futsal.get('lng')),
           map: view.map,
           title: futsal.get('name'),
           icon: require('../assets/images/marker.png')
         });
-        marker.addListener('click', function() {
-          infowindow.open(view.map, marker);
+
+        google.maps.event.addListener(marker, 'click', function() {
+          view.infowindow.setContent(view.infoTemplate({futsal: futsal, address: null}));
+          view.infowindow.open(view.map, this);
+          view._getReverseGeocodingData(view.infowindow, futsal);
         });
+
         view.markers.push(marker);
       });
     }).catch((err) => {
